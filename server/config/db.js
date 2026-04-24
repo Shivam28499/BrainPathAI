@@ -19,10 +19,22 @@ const sequelize = new Sequelize(
 
 const connectDB = async () => {
   try {
+    console.log("Connecting to DB:", {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      user: process.env.DB_USER,
+      database: process.env.DB_NAME,
+      dialect: process.env.DB_DIALECT,
+      hasPassword: Boolean(process.env.DB_PASSWORD),
+    });
     await sequelize.authenticate();
     console.log("MySQL connected successfully");
   } catch (error) {
-    console.error("Database connection failed:", error.message);
+    console.error("Database connection failed");
+    console.error("Error name:", error?.name);
+    console.error("Error message:", error?.message);
+    console.error("Error code:", error?.original?.code || error?.parent?.code);
+    console.error("Full error:", error);
     process.exit(1);
   }
 };
