@@ -1,45 +1,47 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT || 3306,
-    dialect: process.env.DB_DIALECT || "mysql",
-    logging: false,
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 60000,
-      idle: 10000,
-    },
-    retry: {
-      max: 3,
-    },
-    dialectOptions: {
-      connectTimeout: 60000,
-      ...(process.env.DB_SSL === "true"
-        ? { ssl: { require: true, rejectUnauthorized: false } }
-        : {}),
-    },
-  }
-);
+const sharedOptions = {
+  logging: false,
+  pool: { max: 5, min: 0, acquire: 60000, idle: 10000 },
+  retry: { max: 3 },
+  dialectOptions: {
+    connectTimeout: 60000,
+    ...(process.env.DB_SSL === "true"
+      ? { ssl: { require: true, rejectUnauthorized: false } }
+      : {}),
+  },
+};
+
+let sequelize;
+if (process.env.DATABASE_URL) {
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: process.env.DB_DIALECT || "postgres",
+    ...sharedOptions,
+  });
+} else {
+  sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT || 5432,
+      dialect: process.env.DB_DIALECT || "postgres",
+      ...sharedOptions,
+    }
+  );
+}
 
 const connectDB = async () => {
   try {
     console.log("Connecting to DB:", {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      database: process.env.DB_NAME,
+      via: process.env.DATABASE_URL ? "DATABASE_URL" : "individual vars",
       dialect: process.env.DB_DIALECT,
-      hasPassword: Boolean(process.env.DB_PASSWORD),
+      ssl: process.env.DB_SSL === "true",
     });
     await sequelize.authenticate();
-    console.log("MySQL connected successfully");
+    console.log("Database connected successfully");
   } catch (error) {
     console.error("Database connection failed");
     console.error("Error name:", error?.name);
