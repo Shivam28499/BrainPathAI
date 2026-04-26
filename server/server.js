@@ -1,10 +1,19 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
 
 const { connectDB, sequelize } = require("./config/db");
 require("./models"); // Load all models and associations
+
+// Ensure uploads/ directory exists (Render starts from a fresh clone with no folder)
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log("Created uploads/ directory at startup");
+}
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
