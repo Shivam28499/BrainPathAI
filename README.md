@@ -1,12 +1,14 @@
 # BrainPath AI 🧠
 
-> **An AI-powered learning platform with RAG over user documents, streaming LLM responses, and a full LMS — built with the MERN-style stack (React · Express · MySQL).**
+> **An AI-powered learning platform with RAG over user documents, streaming LLM responses, and a full LMS — built with React, Node.js, Express, and PostgreSQL.**
 
-## 🎬 Demo
+🚀 **[Live Demo](https://brainpathai-eta.vercel.app)** &nbsp;·&nbsp; 📦 **[Source Code](https://github.com/Shivam28499/BrainPathAI)** &nbsp;·&nbsp; 🧠 **[Architecture & Internals](docs/internals.md)**
 
-![BrainPath AI demo](docs/demo.gif)
+**Demo credentials:** `shiva@brainpath.com` / `student123` (student) · `rahul@brainpath.com` / `instructor123` (instructor) · `admin@brainpath.com` / `admin123` (admin)
 
-*Upload a PDF → ask a question → watch the answer stream in with grounded citations.*
+> *Upload a PDF → ask a question → watch the answer stream in with grounded citations and source page references.*
+
+---
 
 ---
 
@@ -262,5 +264,8 @@ BrainPathAI/
 
 ##  Author
 
-Built by **Shiva Kumar** — MERN + AI Engineer.
-[LinkedIn](https://www.linkedin.com/in/your-linkedin) · [GitHub](https://github.com/your-username)
+Built by **Shivam Kumar** — Full-Stack MERN + AI Engineer.
+
+[LinkedIn](https://www.linkedin.com/in/shivam-kumar-b1a978252/) · [GitHub](https://github.com/Shivam28499) · [LeetCode (1600+)](https://leetcode.com/u/shivam_kumar008/)
+
+Open to remote MERN + AI Engineer roles and freelance contracts. DMs welcome.
