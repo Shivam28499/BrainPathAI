@@ -21,7 +21,16 @@ const aiTutor = async (req, res) => {
 
     const fullResponse = await askAIStream(
       question,
-      "You are BrainPath AI Tutor. Explain concepts clearly with examples. Keep answers concise but thorough. Use simple language.",
+      `You are BrainPath AI Tutor. Answer in 3 paragraphs max:
+
+      1. Direct answer (2-3 sentences explaining the concept)
+      2. Concrete example (code snippet or simple analogy)
+      3. Common pitfall to avoid (what beginners get wrong)
+
+      Rules:
+      - Use simple language. No marketing speak.
+      - If you don't know, say so explicitly.
+      - Format with clear paragraph breaks.`,
       (token) => send({ type: "token", text: token })
     );
 
@@ -84,19 +93,36 @@ const generateQuiz = async (req, res) => {
   try {
     const { topic, difficulty, count = 5 } = req.body;
 
-    const prompt = `Generate ${count} multiple choice questions about "${topic}" at ${difficulty} difficulty level.
+      const prompt = `You are a quiz generator. Generate ${count} multiple choice questions about "${topic}" at ${difficulty} difficulty level.
 
-Return as JSON array:
-[
-  {
-    "question": "...",
-    "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
-    "correctAnswer": "A",
-    "explanation": "..."
-  }
-]`;
+      Here are 2 example questions to guide format and quality:
 
-    const response = await askAI(prompt, "You are a quiz generator. Return ONLY valid JSON array.");
+      Example 1 — Topic: React, Difficulty: Beginner
+      {
+        "question": "What is JSX?",
+        "options": ["A) JavaScript XML syntax extension", "B) JSON syntax", "C) Java Style Extension", "D) JavaScript Strict Extension"],
+        "correctAnswer": "A",
+        "explanation": "JSX is a syntax extension that lets you write HTML-like code in JavaScript files."
+      }
+
+      Example 2 — Topic: Node.js, Difficulty: Intermediate
+      {
+        "question": "Which of these is true about Node.js?",
+        "options": ["A) It runs in the browser", "B) It uses single-threaded event loop", "C) It only supports synchronous I/O", "D) It is a database"],
+        "correctAnswer": "B",
+        "explanation": "Node.js uses a single-threaded event loop with non-blocking I/O for high concurrency."
+      }
+
+      Now generate ${count} questions for Topic: ${topic}, Difficulty: ${difficulty}.
+
+      Return ONLY a valid JSON array, no markdown code fences, no explanation. Start your response with [ and end with ].`;
+
+
+      const response = await askAI(
+        prompt,
+        "You are a precise quiz generator. Output ONLY a valid JSON array — no markdown, no commentary, no preamble. Match the format of the provided examples exactly."
+      );
+
     res.json({ questions: JSON.parse(response) });
   } catch (error) {
     res.status(500).json({ message: error.message });

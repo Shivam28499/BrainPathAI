@@ -11,11 +11,12 @@ Notes from 3Blue1Brown DL6: "Attention in transformers, visually explained". Sel
 For each word, decide **which OTHER words in the sentence carry information relevant to its meaning.**
 
 **Example:**
+
 ```
 "The cat sat on the mat. It was furry."
 ```
 
-When processing "**It**", the model needs to figure out that "It" refers to "cat" (not "mat", not "the"). 
+When processing "**It**", the model needs to figure out that "It" refers to "cat" (not "mat", not "the").
 
 **Self-attention is the math that lets the model figure this out.**
 
@@ -35,11 +36,11 @@ For each token, the model creates **3 different vectors** by multiplying the tok
 
 Imagine searching a library:
 
-| Vector | Role | Library equivalent |
-|---|---|---|
-| **Query (Q)** | "What am I looking for?" | "I want books about cats" |
-| **Key (K)** | "What am I about?" | Each book has a label: "I am about cats" / "I am about finance" |
-| **Value (V)** | "What info do I provide if you pick me?" | The actual content of the book |
+| Vector        | Role                                     | Library equivalent                                              |
+| ------------- | ---------------------------------------- | --------------------------------------------------------------- |
+| **Query (Q)** | "What am I looking for?"                 | "I want books about cats"                                       |
+| **Key (K)**   | "What am I about?"                       | Each book has a label: "I am about cats" / "I am about finance" |
+| **Value (V)** | "What info do I provide if you pick me?" | The actual content of the book                                  |
 
 #### In transformer math
 
@@ -109,24 +110,24 @@ Single attention computes ONE pattern of relationships. **Multi-head attention c
 
 Different heads learn different relationship types:
 
-| Head | Specialization (example) |
-|---|---|
+| Head   | Specialization (example)                           |
+| ------ | -------------------------------------------------- |
 | Head 1 | Subject-verb agreement ("cats ARE", not "cats IS") |
-| Head 2 | Pronoun resolution ("it" → "cat") |
-| Head 3 | Adjective-noun binding ("furry" → "cat") |
-| Head 4 | Sentence-level structure (subject vs object) |
-| Head 5 | Long-distance dependencies |
-| ... | ... |
+| Head 2 | Pronoun resolution ("it" → "cat")                  |
+| Head 3 | Adjective-noun binding ("furry" → "cat")           |
+| Head 4 | Sentence-level structure (subject vs object)       |
+| Head 5 | Long-distance dependencies                         |
+| ...    | ...                                                |
 
 The model never explicitly tells heads what to specialize in. They self-organize during training.
 
 #### Sizes in real models
 
-| Model | Heads per layer | Total layers |
-|---|---|---|
-| GPT-2 small | 12 | 12 |
-| GPT-3 | 96 | 96 |
-| Llama-3-70B | 64 | 80 |
+| Model       | Heads per layer | Total layers |
+| ----------- | --------------- | ------------ |
+| GPT-2 small | 12              | 12           |
+| GPT-3       | 96              | 96           |
+| Llama-3-70B | 64              | 80           |
 
 That's thousands of attention "computations" per token. **Massively parallel pattern matching.**
 
@@ -212,15 +213,16 @@ You might think: "I don't write transformers. Why does this matter?"
 
 Because **attention is happening every time you call Groq's API**:
 
-| Concept | Where it appears in your work |
-|---|---|
-| Self-attention | Every Llama-3.3-70B call uses 64 heads × 80 layers of self-attention |
-| Q · K dot product | This is what makes Llama "understand" your prompt |
+| Concept              | Where it appears in your work                                                 |
+| -------------------- | ----------------------------------------------------------------------------- |
+| Self-attention       | Every Llama-3.3-70B call uses 64 heads × 80 layers of self-attention          |
+| Q · K dot product    | This is what makes Llama "understand" your prompt                             |
 | Multi-head attention | Why Llama can handle complex multi-paragraph prompts (e.g., your RAG context) |
-| Masked attention | Why streaming works token-by-token (each new token only sees past tokens) |
-| Softmax | Used both for attention weights AND final next-token sampling |
+| Masked attention     | Why streaming works token-by-token (each new token only sees past tokens)     |
+| Softmax              | Used both for attention weights AND final next-token sampling                 |
 
 Knowing this:
+
 - **You can write better prompts** (you understand WHY the LLM weights certain words more)
 - **You can debug bad outputs** (long context = attention spreads thin)
 - **You can explain to clients/interviewers** WHY GPT does what it does
@@ -264,5 +266,6 @@ If you can answer all 6 → DL6 mastered. You now understand the heart of every 
 DL7 covers the MLP/feedforward layers between attention layers. Worth watching but not as critical as DL5/DL6.
 
 For deeper understanding:
+
 - Jay Alammar **"The Illustrated Transformer"** — same content with beautiful diagrams
 - Andrej Karpathy **"Let's build GPT from scratch"** — code-level (Python, harder for JS dev)

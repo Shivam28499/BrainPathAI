@@ -23,7 +23,7 @@ This is better than sending the whole PDF for four reasons:
 - **Accuracy** — More irrelevant text in the prompt means more chances for the
   model to get distracted or hallucinate. Focused context produces focused
   answers.
-- **Speed** — Smaller prompts → faster generation.
+- **Speed** — Smaller prompts → faster generation. 
 
 So RAG = retrieve relevant context first, then generate.
 

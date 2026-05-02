@@ -7,3 +7,4 @@ uploads/
 client/build/
 client/.env
 server/.env
+docs
