@@ -1,3 +1,4 @@
+const { askAI } = require("./aiService.js");
 // Lazy-load the pipeline once and cache it (model is ~90MB, first load downloads it)
 let embedderPromise = null;
 
@@ -79,10 +80,27 @@ const findTopK = (queryEmbedding, items, k = 5) => {
   return scored.slice(0, k);
 };
 
+const generateChunkContext = async (fullDoc, chunk) => {
+  const systemPrompt = `You are a document context generator. Given a full document and one chunk from it, write a 50-100 token context placing the chunk in the document. Be concise. Output ONLY the context, no preamble.`;
+
+  const userPrompt = `<full_document>
+${fullDoc}
+</full_document>
+
+<chunk>
+${chunk}
+</chunk>
+
+Write 50-100 tokens of context for this chunk.`;
+
+  return (await askAI(userPrompt, systemPrompt)).trim();
+};
+
 module.exports = {
   embedText,
   embedBatch,
   chunkText,
   cosineSimilarity,
   findTopK,
+  generateChunkContext
 };

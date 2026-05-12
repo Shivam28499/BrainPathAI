@@ -2,9 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const { PDFParse } = require("pdf-parse");
 const { Document, DocumentChunk } = require("../models");
-const { embedText, embedBatch, chunkText, findTopK } = require("../services/ragService");
+const { embedText, embedBatch, chunkText, findTopK, generateChunkContext } = require("../services/ragService");
 const { askAIStream } = require("../services/aiService");
-
 // POST /api/documents/upload
 const uploadDocument = async (req, res) => {
   if (!req.file) return res.status(400).json({ message: "No file uploaded" });
@@ -72,11 +71,19 @@ const processDocument = async (doc, filePath) => {
 
   // Fallback: if per-page gave us nothing but the overall text was fine, chunk the overall text
   if (allChunks.length === 0 && realText.length >= 100) {
-    const pieces = chunkText(realText, 800, 100);
+    const pieces = chunkText(realText,800,100);
     pieces.forEach((piece) => allChunks.push({ text: piece, pageNumber: 1 }));
   }
 
   if (allChunks.length === 0) throw new Error(SCANNED_PDF_MSG);
+
+    // Contextual Retrieval: add document-level context to each chunk before embedding
+  for (let i = 0; i < allChunks.length; i++) {
+    const context = await generateChunkContext(realText, allChunks[i].text);
+    allChunks[i].text = context + "\n\n" + allChunks[i].text;
+  }
+
+   console.log("[CTX TEST] First chunk:", allChunks[0].text.substring(0, 300));
 
   const embeddings = await embedBatch(allChunks.map((c) => c.text));
 

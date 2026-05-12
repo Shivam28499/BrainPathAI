@@ -3,17 +3,27 @@ require("dotenv").config();
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const askAI = async (prompt, systemPrompt = "You are a helpful educational AI assistant.") => {
+const askAI = async (
+  prompt,
+  systemPrompt = "You are a helpful educational AI assistant.",
+  prefill = ""
+) => {
+  let messages = [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: prompt },
+  ];
+
+  if (prefill) {
+    messages.push({ role: "assistant", content: prefill });
+  }
+
   const result = await groq.chat.completions.create({
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: prompt },
-    ],
+    messages,
     model: "llama-3.3-70b-versatile",
     temperature: 0.7,
     max_tokens: 2048,
   });
-  return result.choices[0].message.content;
+  return prefill + result.choices[0].message.content;
 };
 
 // Stream tokens as they arrive. `onToken(text)` is called for each delta.
